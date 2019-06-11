@@ -50,7 +50,7 @@ int generateRandom(int min, int max, int *result) {
 	try {
 		createEnclave(&eid);
 
-		unsigned char *buf = new unsigned char[1];
+		unsigned char buf[1];
 		generateRandomChar(eid, buf);
 
 		mappedRandomValue = affineTransformation((int)buf[0], min, max, 0, 255);
