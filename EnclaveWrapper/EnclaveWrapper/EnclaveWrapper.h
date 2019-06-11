@@ -6,4 +6,4 @@
 #define SGX_ENCLAVE_EXPORTS_API __declspec(dllimport)
 #endif
 
-extern "C" SGX_ENCLAVE_EXPORTS_API int generateRandom(int min, int max, int *result);
+extern "C" SGX_ENCLAVE_EXPORTS_API int generateRandom(long min, long max, long *result);

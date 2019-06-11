@@ -3,14 +3,11 @@
 #include "ErrorCode.h"
 #include "Enclave_t.h"
 
-using namespace std;
-
-unsigned int e_generate_random(unsigned char *result)
-{
-	unsigned char randBuf[1];
-	if (sgx_read_rand(randBuf, 1) != SGX_SUCCESS) return FC_ERR_RAND;
-
-	memcpy(result, randBuf, 1);
+unsigned int e_generate_random_long(unsigned long *result) {
+	unsigned long longRand;
+	if (sgx_read_rand((unsigned char *)&longRand, 4) != SGX_SUCCESS) return FC_ERR_RAND;
+	
+	memcpy(result, &longRand, sizeof(unsigned long));
 
 	return FC_OK;
 }

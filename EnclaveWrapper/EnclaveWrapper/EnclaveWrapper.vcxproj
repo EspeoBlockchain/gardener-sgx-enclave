@@ -295,6 +295,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="EnclaveManager.h" />
     <ClInclude Include="EnclaveWrapper.h" />
     <ClInclude Include="Enclave_u.h" />
     <ClInclude Include="ErrorCode.h" />
@@ -329,6 +330,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Prerelease|x64'">
       </PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="EnclaveManager.cpp" />
     <ClCompile Include="EnclaveWrapper.cpp" />
     <ClCompile Include="Enclave_u.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Prerelease|x64'">
