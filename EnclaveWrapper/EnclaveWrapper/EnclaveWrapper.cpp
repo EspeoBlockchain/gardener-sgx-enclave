@@ -14,10 +14,9 @@ int generateRandom(long min, long max, long *result) {
 		EnclaveManager enclave;
 		unsigned long buf[1];
 		enclave.generateRandom(buf);
-		printf("%f-way through\n", (float)buf[0] / (float)ULONG_MAX);
 
 		mappedRandomValue = affineTransformation(buf[0], min, max, 0, ULONG_MAX);
-		printf("Transforming [0, %lu] to [%d, %d]: %lu -> %ld \n", ULONG_MAX, min, max, buf[0], mappedRandomValue);
+		printf("Transforming [0, %lu] to [%ld, %ld]: %lu -> %ld \n", ULONG_MAX, min, max, buf[0], mappedRandomValue);
 	} catch (SgxException& e) {
 		printf("%s\n", e.what());
 		return -1;
