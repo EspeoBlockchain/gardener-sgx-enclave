@@ -9,7 +9,7 @@ SgxException::SgxException(sgx_status_t errorCode) {
 }
 
 SgxException::~SgxException() {
-	delete buf;
+	free(buf);
 }
 
 const char * SgxException::what() const throw () {
