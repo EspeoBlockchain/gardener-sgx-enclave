@@ -25,10 +25,6 @@ EnclaveManager::~EnclaveManager() {
 	if (ret != SGX_SUCCESS) throw SgxException(ret);
 }
 
-sgx_enclave_id_t EnclaveManager::getEnclaveId() {
-	return eid;
-}
-
 unsigned int EnclaveManager::generateRandom(unsigned long *buf) {
 	unsigned int ret = FC_OK;
 	e_generate_random_long(eid, &ret, buf);
