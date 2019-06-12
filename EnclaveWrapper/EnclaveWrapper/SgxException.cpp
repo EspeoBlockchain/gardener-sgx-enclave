@@ -6,10 +6,11 @@
 SgxException::SgxException(sgx_status_t errorCode) {
 	this->errorCode = errorCode;
 	buf = (char*)malloc(BUFSIZE);
+	buf = new char[BUFSIZE];
 }
 
 SgxException::~SgxException() {
-	free(buf);
+	delete buf;
 }
 
 const char * SgxException::what() const throw () {

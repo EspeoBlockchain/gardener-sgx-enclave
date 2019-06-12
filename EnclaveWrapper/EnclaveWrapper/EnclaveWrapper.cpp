@@ -12,11 +12,11 @@ int generateRandom(long min, long max, long *result) {
 
 	try {
 		EnclaveManager enclave;
-		unsigned long buf[1];
-		enclave.generateRandom(buf);
+		unsigned long generated;
+		enclave.generateRandom(&generated);
 
-		mappedRandomValue = affineTransformation(buf[0], min, max, 0, ULONG_MAX);
-		printf("Transforming [0, %lu] to [%ld, %ld]: %lu -> %ld \n", ULONG_MAX, min, max, buf[0], mappedRandomValue);
+		mappedRandomValue = affineTransformation(generated, min, max, 0, ULONG_MAX);
+		printf("Transforming [0, %lu] to [%ld, %ld]: %lu -> %ld \n", ULONG_MAX, min, max, generated, mappedRandomValue);
 	} catch (SgxException& e) {
 		printf("%s\n", e.what());
 		return -1;
