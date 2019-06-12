@@ -5,7 +5,6 @@
 
 SgxException::SgxException(sgx_status_t errorCode) {
 	this->errorCode = errorCode;
-	buf = (char*)malloc(BUFSIZE);
 	buf = new char[BUFSIZE];
 }
 

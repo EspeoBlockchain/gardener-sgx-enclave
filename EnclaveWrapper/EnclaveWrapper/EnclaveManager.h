@@ -12,6 +12,5 @@ public:
 	EnclaveManager();
 	virtual ~EnclaveManager();
 	sgx_enclave_id_t getEnclaveId();
-	unsigned int generateRandom(unsigned char *buf);
 	unsigned int generateRandom(unsigned long *buf);
 };
