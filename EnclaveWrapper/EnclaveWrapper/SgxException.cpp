@@ -5,15 +5,12 @@
 
 SgxException::SgxException(sgx_status_t errorCode) {
 	this->errorCode = errorCode;
-	buf = new char[BUFSIZE];
 }
 
-SgxException::~SgxException() {
-	delete buf;
-}
+const char * SgxException::what() throw () {
+	std::stringstream stream;
+	stream << "SGX Exception, error code was " << std::hex << errorCode << std::endl;
+	buf = std::string(stream.str());
 
-const char * SgxException::what() const throw () {
-	sprintf_s(buf, BUFSIZE, "SGX Exception, error code was %x\n", errorCode);
-
-	return buf;
+	return buf.c_str();
 }
