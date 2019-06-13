@@ -10,7 +10,7 @@ SgxException::SgxException(sgx_status_t errorCode) {
 const char * SgxException::what() throw () {
 	std::stringstream stream;
 	stream << "SGX Exception, error code was " << std::hex << errorCode << std::endl;
-	buf = std::string(stream.str());
+	buf.assign(stream.str());
 
 	return buf.c_str();
 }

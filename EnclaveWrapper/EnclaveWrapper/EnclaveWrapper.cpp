@@ -10,8 +10,7 @@ long affineTransformation(unsigned long x, long targetRangeMin, long targetRange
 int generateRandom(long min, long max, long *result) {
 	try {
 		EnclaveManager enclave;
-		unsigned long generated;
-		enclave.generateRandom(&generated);
+		unsigned long generated = enclave.generateRandom();
 
 		*result = affineTransformation(generated, min, max, 0, ULONG_MAX);
 		printf("Transforming [0, %lu] to [%ld, %ld]: %lu -> %ld \n", ULONG_MAX, min, max, generated, *result);

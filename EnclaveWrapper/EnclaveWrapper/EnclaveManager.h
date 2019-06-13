@@ -11,5 +11,5 @@ private:
 public:
 	EnclaveManager();
 	virtual ~EnclaveManager();
-	unsigned int generateRandom(unsigned long *buf);
+	unsigned long generateRandom();
 };
