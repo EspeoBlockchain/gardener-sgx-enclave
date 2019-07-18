@@ -1,6 +1,7 @@
-# Gardener SGX enclave
+Build EnclaveWrapper library using g++ -shared -fPIC -o EnclaveWrapper.so App/*.o .This will be later put into Makefile
 
-This contains Intel SGX Enclave code. It will be released as DLLs and then utilised in gardener-sgx-server. It consists of 2 Visual Studio C++ projects:
+test.cpp is a program to test that libs are being correctly linked
 
-- Enclave: pure SGX enclave code. It is packaged into Enclave.signed.dll
-- Enclave Wrapper: wraps enclave calls to ensure error handling and provide easily interactive interface. It is packaged into EnclaveWrapper.dll
+Before compiling, you need to generate a private signing key under Enclave/Enclave_private.pem
+Correctly buliding EnclaveWrapper in Hardware Mode requires a SGX ready machine, installing SGX SDK&PSW and using a PSW version of libsgx_urts.so . This is rather tricky so you better ask @kss-espeo for help.
+
