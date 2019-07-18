@@ -4,6 +4,4 @@
 
 extern "C" int generateRandom(long min, long max, long *result);
 
-extern "C" int test(int arg);
-
 #endif

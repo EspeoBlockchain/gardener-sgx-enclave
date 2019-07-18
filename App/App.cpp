@@ -23,10 +23,6 @@ int generateRandom(long min, long max, long *result) {
 	return 0;
 }
 
-int test(int arg) {
-	return 123;
-}
-
 int main() {
 	return 0;
 }
