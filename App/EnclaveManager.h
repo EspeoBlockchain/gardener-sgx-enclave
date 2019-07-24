@@ -2,7 +2,7 @@
 
 #include "sgx_urts.h"
 
-#define ENCLAVE_FILENAME "Enclave.signed.so"
+#define ENCLAVE_FILENAME "libs/Enclave.signed.so"
 
 struct EnclaveManager {
 private:
