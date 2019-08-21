@@ -23,6 +23,25 @@ int generateRandom(long min, long max, long *result) {
 	return 0;
 }
 
+int initRemoteAttestation(int *status) {
+    try {
+		EnclaveManager enclave;
+		*status = enclave.initRemoteAttestation();
+
+		printf("Tried to initialise remote attestation. Status was %d\n", *status);
+	} catch (SgxException& e) {
+		printf("%s\n", e.what());
+		return -1;
+	}
+
+	return 0;
+}
+
 int main() {
+    long longStatus;
+    int intStatus;
+    generateRandom(10L, 20L, &longStatus);
+    initRemoteAttestation(&intStatus);
+
 	return 0;
 }

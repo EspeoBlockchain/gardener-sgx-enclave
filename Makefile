@@ -81,7 +81,10 @@ else
 	Urts_Library_Name := sgx_urts
 endif
 
-App_Cpp_Files := App/App.cpp App/EnclaveManager.cpp App/SgxException.cpp $(wildcard App/Edger8rSyntax/*.cpp) $(wildcard App/TrustedLibrary/*.cpp)
+# App_Cpp_Files := App/App.cpp App/EnclaveManager.cpp App/SgxException.cpp $(wildcard App/Edger8rSyntax/*.cpp) $(wildcard App/TrustedLibrary/*.cpp)
+App_Cpp_Files := App/App.cpp App/EnclaveManager.cpp App/SgxException.cpp Attestation/hexutil.cpp Attestation/agent_wget.cpp \
+Attestation/base64.cpp Attestation/common.cpp Attestation/crypto.cpp Attestation/enclave_verify.cpp Attestation/hexutil.cpp \
+Attestation/iasrequest.cpp Attestation/logfile.cpp Attestation/msgio.cpp
 App_Include_Paths := -IInclude -IApp -I$(SGX_SDK)/include
 
 App_C_Flags := -fPIC -Wno-attributes $(App_Include_Paths)
@@ -155,8 +158,8 @@ Enclave_Link_Flags := $(Enclave_Security_Link_Flags) \
 
 Enclave_Cpp_Objects := $(Enclave_Cpp_Files:.cpp=.o)
 
-Enclave_Name := Enclave.so
-Signed_Enclave_Name := Enclave.signed.so
+Enclave_Name := libs/Enclave.so
+Signed_Enclave_Name := libs/Enclave.signed.so
 Enclave_Config_File := Enclave/Enclave.config.xml
 
 ifeq ($(SGX_MODE), HW)
@@ -219,6 +222,18 @@ endif
 	@touch .config_$(Build_Mode)_$(SGX_ARCH)
 
 ######## App Objects ########
+
+Attestation/%.o: Attestation/%.cpp
+	@$(CXX) $(SGX_COMMON_CXXFLAGS) $(App_Cpp_Flags) -c $< -o $@
+	@echo "CXX  <=  $<"
+
+Attestation/%.o: Attestation/%.c
+	@$(CC) $(SGX_COMMON_CXXFLAGS) $(App_C_Flags) -c $< -o $@
+	@echo "CC  <=  $<"
+
+Attestation/hexutil.o: Attestation/hexutil.cpp
+	@$(CC) $(SGX_COMMON_CXXFLAGS) $(App_C_Flags) -c $< -o $@
+	@echo "CC  <=  $<"
 
 App/Enclave_u.h: $(SGX_EDGER8R) Enclave/Enclave.edl
 	@cd App && $(SGX_EDGER8R) --untrusted ../Enclave/Enclave.edl --search-path ../Enclave --search-path $(SGX_SDK)/include

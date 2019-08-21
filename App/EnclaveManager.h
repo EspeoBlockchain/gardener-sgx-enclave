@@ -12,4 +12,5 @@ public:
 	EnclaveManager();
 	virtual ~EnclaveManager();
 	unsigned long generateRandom();
+	unsigned int initRemoteAttestation();
 };

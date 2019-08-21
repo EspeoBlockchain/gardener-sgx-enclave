@@ -1,12 +1,14 @@
 enclave {
     from "sgx_tstdc.edl" import *;
 
+    include "sgx_report.h"
+
     trusted {
-        /* define ECALLs here. */
 		public unsigned int e_generate_random_long ([user_check] unsigned long *result);
+
+        public unsigned int e_create_report([in] sgx_target_info_t* quote_enc_info, [out] sgx_report_t* report);
     };
 
     untrusted {
-        /* define OCALLs here. */
     };
 };
