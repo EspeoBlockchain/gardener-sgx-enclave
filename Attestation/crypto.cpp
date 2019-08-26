@@ -30,6 +30,7 @@ in the License.
 #include <sgx_key_exchange.h>
 #include "crypto.h"
 #include "hexutil.h"
+#include "config.h"
 
 static enum _error_type {
 	e_none,
@@ -682,26 +683,16 @@ cleanup:
  * Certificate verification
  *========================================================================== */
 
-int cert_load_file (X509 **cert, const char *filename)
+int cert_load_file (X509 **cert)
 {
 	FILE *fp;
 
 	error_type= e_none;
-
-
-#ifdef _WIN32
-	if ((fopen_s(&fp, filename, "r")) != 0) {
+	if ((fp = fopen(IAS_CERT_FILENAME, "r")) == NULL) {
 		error_type = e_system;
-		ep = filename;
+		ep = IAS_CERT_FILENAME;
 		return 0;
 	}
-#else
-	if ((fp = fopen(filename, "r")) == NULL) {
-		error_type = e_system;
-		ep = filename;
-		return 0;
-	}
-#endif
 
 
 	*cert= PEM_read_X509(fp, NULL, NULL, NULL);

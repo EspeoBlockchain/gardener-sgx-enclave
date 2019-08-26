@@ -10,6 +10,9 @@
 /* Default CA bundle for OpenSSL-based applications */
 #define DEFAULT_CA_BUNDLE_AUTO "/etc/ssl/certs/ca-certificates.crt"
 
+/* Default CA bundle for OpenSSL-based applications */
+#define IAS_CERT_FILENAME "ias-cert.pem"
+
 /* Flag set for prerelease builds */
 /* #undef EDEBUG */
 

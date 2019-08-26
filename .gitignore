@@ -1,5 +1,4 @@
-Enclave/Enclave_private.pem
-
+*.pem
 *_u.c
 *_u.h
 *_t.c

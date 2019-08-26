@@ -78,8 +78,8 @@ IAS_Connection::IAS_Connection(int server_idx, uint32_t flags, char *priSubscrip
 	c_agent_name= "";
 	c_proxy_port= 80;
 	c_store= NULL;
-	setSubscriptionKey(SubscriptionKeyID::Primary, priSubscriptionKey); 
-	setSubscriptionKey(SubscriptionKeyID::Secondary, secSubscriptionKey); 
+	setSubscriptionKey(SubscriptionKeyID::Primary, priSubscriptionKey);
+	setSubscriptionKey(SubscriptionKeyID::Secondary, secSubscriptionKey);
 }
 
 IAS_Connection::~IAS_Connection()
@@ -157,7 +157,7 @@ int IAS_Connection::setSubscriptionKey(SubscriptionKeyID id, char * subscription
 
 
     // zero the original subscription key in memory
-    memset(subscriptionKeyPlainText, 0, IAS_SUBSCRIPTION_KEY_SIZE);
+    subscriptionKeyPlainText = NULL;
 
     return 1;
 }

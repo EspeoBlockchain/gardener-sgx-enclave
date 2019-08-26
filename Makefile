@@ -84,7 +84,7 @@ endif
 # App_Cpp_Files := App/App.cpp App/EnclaveManager.cpp App/SgxException.cpp $(wildcard App/Edger8rSyntax/*.cpp) $(wildcard App/TrustedLibrary/*.cpp)
 App_Cpp_Files := App/App.cpp App/EnclaveManager.cpp App/SgxException.cpp Attestation/hexutil.cpp Attestation/agent_wget.cpp \
 Attestation/base64.cpp Attestation/common.cpp Attestation/crypto.cpp Attestation/enclave_verify.cpp Attestation/hexutil.cpp \
-Attestation/iasrequest.cpp Attestation/logfile.cpp Attestation/msgio.cpp
+Attestation/iasrequest.cpp Attestation/logfile.cpp Attestation/msgio.cpp Attestation/byteorder.cpp
 App_Include_Paths := -IInclude -IApp -I$(SGX_SDK)/include
 
 App_C_Flags := -fPIC -Wno-attributes $(App_Include_Paths)
@@ -224,16 +224,8 @@ endif
 ######## App Objects ########
 
 Attestation/%.o: Attestation/%.cpp
-	@$(CXX) $(SGX_COMMON_CXXFLAGS) $(App_Cpp_Flags) -c $< -o $@
+	@$(CXX) $(SGX_COMMON_CXXFLAGS) $(App_Cpp_Flags) -c $< -o $@ -lssl -lcrypto
 	@echo "CXX  <=  $<"
-
-Attestation/%.o: Attestation/%.c
-	@$(CC) $(SGX_COMMON_CXXFLAGS) $(App_C_Flags) -c $< -o $@
-	@echo "CC  <=  $<"
-
-Attestation/hexutil.o: Attestation/hexutil.cpp
-	@$(CC) $(SGX_COMMON_CXXFLAGS) $(App_C_Flags) -c $< -o $@
-	@echo "CC  <=  $<"
 
 App/Enclave_u.h: $(SGX_EDGER8R) Enclave/Enclave.edl
 	@cd App && $(SGX_EDGER8R) --untrusted ../Enclave/Enclave.edl --search-path ../Enclave --search-path $(SGX_SDK)/include
@@ -250,7 +242,7 @@ App/%.o: App/%.cpp  App/Enclave_u.h
 	@echo "CXX  <=  $<"
 
 $(App_Name): App/Enclave_u.o $(App_Cpp_Objects)
-	@$(CXX) $^ -o $@ $(App_Link_Flags)
+	@$(CXX) $^ -o $@ $(App_Link_Flags) -lssl -lcrypto
 	@echo "LINK =>  $@"
 
 ######## Enclave Objects ########

@@ -39,29 +39,10 @@
 sgx_measurement_t my_mr_signer;
 static int _init= 0;
 
-extern int verbose;
-
 int verify_enclave_identity(sgx_measurement_t req_mr_signer, 
 	sgx_prod_id_t req_isv_product_id, sgx_isv_svn_t min_isvsvn,
 	int allow_debug, sgx_report_body_t *report)
 {
-	if ( verbose ) {
-		edividerWithText("Client enclave Identity");
-		eprintf("Enclave MRSIGNER      = %s\n", 
-			hexstring((const char *) &report->mr_signer,
-			sizeof(sgx_measurement_t))
-		);
-		eprintf("Enclave MRENCLAVE     = %s\n", 
-			hexstring((const char *) &report->mr_enclave,
-			sizeof(sgx_measurement_t))
-		);
-		eprintf("Enclave ISV Prod Id   = %x\n", report->isv_prod_id);
-		eprintf("Enclave ISV SVN       = %x\n", report->isv_svn);
-		eprintf("Enclave is debuggable = %s\n",
-			( report->attributes.flags & SGX_FLAGS_DEBUG ) ? "Yes" : "No"
-		);
-	}
-
 	// Is the enclave compiled in debug mode?
 	if ( ! allow_debug ) {
 		if ( report->attributes.flags & SGX_FLAGS_DEBUG ) {

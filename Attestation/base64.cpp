@@ -16,7 +16,7 @@ in the License.
 */
 
 
-#include <sys/types.h>
+#include "base64.h"
 #include <openssl/bio.h>
 #include <openssl/evp.h>
 #include <string.h>

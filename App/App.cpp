@@ -40,7 +40,7 @@ int initRemoteAttestation(int *status) {
 int main() {
     long longStatus;
     int intStatus;
-    generateRandom(10L, 20L, &longStatus);
+    generateRandom(0L, 100L, &longStatus);
     initRemoteAttestation(&intStatus);
 
 	return 0;

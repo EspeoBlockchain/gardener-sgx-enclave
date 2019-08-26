@@ -69,7 +69,7 @@ int ecdsa_sign(unsigned char *msg, size_t mlen, EVP_PKEY *key,
 
 /* Certs */
 
-int cert_load_file (X509 **cert, const char *filename);
+int cert_load_file (X509 **cert);
 int cert_load_size (X509 **cert, const char *pemdata, size_t sz);
 int cert_load (X509 **cert, const char *pemdata);
 X509_STORE *cert_init_ca(X509 *cert);
