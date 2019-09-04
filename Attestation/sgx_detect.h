@@ -15,39 +15,24 @@ in the License.
 
 */
 
-#include <stdio.h>
-#include <sys/types.h>
-#include <stdlib.h>
-#include <sys/stat.h>
-#include "logfile.h"
-#include "hexutil.h"
+#pragma once
 
-FILE *fplog = NULL;
+#include <sgx_urts.h>
 
+#define SGX_SUPPORT_UNKNOWN			0x00000000
+#define SGX_SUPPORT_NO				0x80000000
+#define SGX_SUPPORT_YES				0x00000001
+#define SGX_SUPPORT_ENABLED			0x00000002
+#define SGX_SUPPORT_REBOOT_REQUIRED	0x00000004
+#define SGX_SUPPORT_ENABLE_REQUIRED	0x00000008
 
-FILE *create_logfile(const char *filename)
-{
-	FILE *fp;
-
-#ifdef _WIN32
-	if (fopen_s(&fp, filename, "w") != 0) {
-		fprintf(stderr, "fopen_s: ");
-#else
-	if ( (fp= fopen(filename, "w")) == NULL ) {
-		fprintf(stderr, "fopen: ");
+#ifdef __cplusplus 
+extern "C" {
 #endif
-		perror(filename);
-		exit(1);
-	}
 
-	return fp;
+int get_sgx_support();
+
+#ifdef __cplusplus
 }
+#endif
 
-
-void close_logfile (FILE *fp)
-{
-	if ( fp ) {
-		fclose(fp);
-		fp = NULL;
-	}
-}

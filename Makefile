@@ -83,8 +83,8 @@ endif
 
 # App_Cpp_Files := App/App.cpp App/EnclaveManager.cpp App/SgxException.cpp $(wildcard App/Edger8rSyntax/*.cpp) $(wildcard App/TrustedLibrary/*.cpp)
 App_Cpp_Files := App/App.cpp App/EnclaveManager.cpp App/SgxException.cpp Attestation/hexutil.cpp Attestation/agent_wget.cpp \
-Attestation/base64.cpp Attestation/common.cpp Attestation/crypto.cpp Attestation/enclave_verify.cpp Attestation/hexutil.cpp \
-Attestation/iasrequest.cpp Attestation/logfile.cpp Attestation/msgio.cpp Attestation/byteorder.cpp
+Attestation/base64.cpp Attestation/crypto.cpp Attestation/enclave_verify.cpp \
+Attestation/iasrequest.cpp Attestation/msgio.cpp Attestation/byteorder.cpp Attestation/hexutil.cpp
 App_Include_Paths := -IInclude -IApp -I$(SGX_SDK)/include
 
 App_C_Flags := -fPIC -Wno-attributes $(App_Include_Paths)
@@ -105,9 +105,9 @@ App_Cpp_Flags := $(App_C_Flags)
 App_Link_Flags := -L$(SGX_LIBRARY_PATH) -l$(Urts_Library_Name) -lpthread 
 
 ifneq ($(SGX_MODE), HW)
-	App_Link_Flags += -lsgx_uae_service_sim
+	App_Link_Flags += -lsgx_uae_service_sim -lsgx_ukey_exchange_sim -lsgx_tkey_exchange_sim
 else
-	App_Link_Flags += -lsgx_uae_service
+	App_Link_Flags += -lsgx_uae_service -lsgx_ukey_exchange -lsgx_tkey_exchange
 endif
 
 App_Cpp_Objects := $(App_Cpp_Files:.cpp=.o)
@@ -151,7 +151,7 @@ Enclave_Security_Link_Flags := -Wl,-z,relro,-z,now,-z,noexecstack
 Enclave_Link_Flags := $(Enclave_Security_Link_Flags) \
     -Wl,--no-undefined -nostdlib -nodefaultlibs -nostartfiles -L$(SGX_LIBRARY_PATH) \
 	-Wl,--whole-archive -l$(Trts_Library_Name) -Wl,--no-whole-archive \
-	-Wl,--start-group -lsgx_tstdc -lsgx_tcxx -l$(Crypto_Library_Name) -l$(Service_Library_Name) -Wl,--end-group \
+	-Wl,--start-group -lsgx_tstdc -lsgx_tcxx -l$(Crypto_Library_Name) -l$(Service_Library_Name) $(App_Link_Flags) -Wl,--end-group \
 	-Wl,-Bstatic -Wl,-Bsymbolic -Wl,--no-undefined \
 	-Wl,-pie,-eenclave_entry -Wl,--export-dynamic  \
 	-Wl,--defsym,__ImageBase=0 -Wl,--gc-sections

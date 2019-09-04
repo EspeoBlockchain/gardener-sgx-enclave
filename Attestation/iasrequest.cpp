@@ -24,7 +24,6 @@ in the License.
 #include <openssl/rand.h>
 #include <openssl/x509.h>
 #include "crypto.h"
-#include "common.h"
 #include "agent.h"
 #ifdef _WIN32
 # define AGENT_WINHTTP
@@ -38,7 +37,6 @@ in the License.
 # include "agent_wget.h"
 #endif
 #include "iasrequest.h"
-#include "logfile.h"
 #include "httpparser/response.h"
 #include "base64.h"
 #include "hexutil.h"
@@ -284,7 +282,7 @@ ias_error_t IAS_Request::sigrl(uint32_t gid, string &sigrl)
 	Agent *agent= r_conn->new_agent();
 
 	if ( agent == NULL ) {
-		eprintf("Could not allocate agent object");
+		printf("Could not allocate agent object");
 		return IAS_QUERY_FAILED;
 	}
 
@@ -301,7 +299,7 @@ ias_error_t IAS_Request::sigrl(uint32_t gid, string &sigrl)
 		} 
 
 	} else {
-		eprintf("Could not query IAS\n");
+		printf("Could not query IAS\n");
 		delete agent;
 		return IAS_QUERY_FAILED;
 	}
@@ -332,7 +330,7 @@ ias_error_t IAS_Request::report(map<string,string> &payload, string &content,
 	Agent *agent= r_conn->new_agent();
 	
 	if ( agent == NULL ) {
-		eprintf("Could not allocate agent object");
+		printf("Could not allocate agent object");
 		return IAS_QUERY_FAILED;
 	}
 
@@ -358,7 +356,7 @@ ias_error_t IAS_Request::report(map<string,string> &payload, string &content,
 	}
 
 	if ( !agent->request(url, body, response) ) {
-		eprintf("Could not query IAS\n");
+		printf("Could not query IAS\n");
 		delete agent;
 		return IAS_QUERY_FAILED;
 	}
@@ -384,7 +382,7 @@ ias_error_t IAS_Request::report(map<string,string> &payload, string &content,
 
 	certchain= response.headers_as_string("X-IASReport-Signing-Certificate");
 	if ( certchain == "" ) {
-		eprintf("Header X-IASReport-Signing-Certificate not found\n");
+		printf("Header X-IASReport-Signing-Certificate not found\n");
 		delete agent;
 		return IAS_BAD_CERTIFICATE;
 	}
@@ -394,7 +392,7 @@ ias_error_t IAS_Request::report(map<string,string> &payload, string &content,
 		certchain= url_decode(certchain);
 	}
 	catch (...) {
-		eprintf("invalid URL encoding in header X-IASReport-Signing-Certificate\n");
+		printf("invalid URL encoding in header X-IASReport-Signing-Certificate\n");
 		delete agent;
 		return IAS_BAD_CERTIFICATE;
 	}
@@ -446,7 +444,7 @@ ias_error_t IAS_Request::report(map<string,string> &payload, string &content,
 
 	if ( ! rv ) {
 		crypto_perror("cert_stack_build");
-		eprintf("certificate verification failure\n");
+		printf("certificate verification failure\n");
 		status= IAS_BAD_CERTIFICATE;
 		goto cleanup;
 	} else {
@@ -456,14 +454,14 @@ ias_error_t IAS_Request::report(map<string,string> &payload, string &content,
 
 	sigstr= response.headers_as_string("X-IASReport-Signature");
 	if ( sigstr == "" ) {
-		eprintf("Header X-IASReport-Signature not found\n");
+		printf("Header X-IASReport-Signature not found\n");
 		status= IAS_BAD_SIGNATURE;
 		goto cleanup;
 	}
 
 	sig= reinterpret_cast<unsigned char*>(base64_decode(sigstr.c_str(), &sigsz));
 	if ( sig == NULL ) {
-		eprintf("Could not decode signature\n");
+		printf("Could not decode signature\n");
 		status= IAS_BAD_SIGNATURE;
 		goto cleanup;
 	}
@@ -478,7 +476,7 @@ ias_error_t IAS_Request::report(map<string,string> &payload, string &content,
 
 	pkey= X509_get_pubkey(sign_cert);
 	if ( pkey == NULL ) {
-		eprintf("Could not extract public key from certificate\n");
+		printf("Could not extract public key from certificate\n");
 		status= IAS_INTERNAL_ERROR;
 		goto cleanup;
 	}
@@ -489,12 +487,14 @@ ias_error_t IAS_Request::report(map<string,string> &payload, string &content,
 		content.length(), sig, sigsz, pkey, &rv) ) {
 
 		crypto_perror("sha256_verify");
-		eprintf("Could not validate signature\n");
+		printf("Could not validate signature\n");
 		status= IAS_BAD_SIGNATURE;
 	} else {
 		if ( !rv ) {
-			eprintf("Invalid report signature\n");
+			printf("Invalid report signature\n");
 			status= IAS_BAD_SIGNATURE;
+		} else {
+		    status= IAS_OK;
 		}
 	}
 

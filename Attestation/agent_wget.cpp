@@ -23,7 +23,6 @@ in the License.
 #include "httpparser/response.h"
 #include "httpparser/httpresponseparser.h"
 #include "agent_wget.h"
-#include "common.h"
 #include "iasrequest.h"
 
 using namespace std;

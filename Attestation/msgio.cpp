@@ -45,7 +45,6 @@ typedef DWORD ssize_t;
 #include <string>
 #include "hexutil.h"
 #include "msgio.h"
-#include "common.h"
 
 using namespace std;
 
@@ -82,7 +81,7 @@ MsgIO::MsgIO(const char *peer, const char *port)
 #ifdef _WIN32
 	rv = WSAStartup(MAKEWORD(2, 2), &wsa);
 	if (rv != 0) {
-		eprintf("WSAStartup: %d\n", rv);
+		printf("WSAStartup: %d\n", rv);
 		throw std::runtime_error("WSAStartup failed");
 	}
 #endif
@@ -95,7 +94,7 @@ MsgIO::MsgIO(const char *peer, const char *port)
 
 	rv= getaddrinfo(peer, port, &hints, &addrs);
 	if (rv != 0) {		
-		eprintf("getaddrinfo: %s\n", gai_strerror(rv));
+		printf("getaddrinfo: %s\n", gai_strerror(rv));
 		throw std::runtime_error("getaddrinfo failed");
 	}
 
@@ -142,14 +141,14 @@ MsgIO::MsgIO(const char *peer, const char *port)
 	if ( s == INVALID_SOCKET ) {
 		if ( peer == NULL ) {
 #ifdef _WIN32
-			eprintf("bind: failed on error %ld\n", WSAGetLastError());
+			printf("bind: failed on error %ld\n", WSAGetLastError());
 #else
 			perror("bind");
 #endif
 		} else {
-			eprintf("%s: ", peer);
+			printf("%s: ", peer);
 #ifdef _WIN32
-			eprintf("connect: failed on error %ld\n", WSAGetLastError());
+			printf("connect: failed on error %ld\n", WSAGetLastError());
 #else
 			perror("connect");
 #endif
@@ -175,7 +174,7 @@ MsgIO::MsgIO(const char *peer, const char *port)
 		// We have a very simple server: it will block until we get a 
 		// connection.
 
-		eprintf("Listening for connections on port %s\n", port);
+		printf("Listening for connections on port %s\n", port);
 	} else { // Client here
 	}
 }
@@ -222,7 +221,7 @@ int MsgIO::server_loop ()
 	if (s == INVALID_SOCKET) {
 #ifdef _WIN32
 		closesocket(ls);
-		eprintf("accept: %d\n", WSAGetLastError());
+		printf("accept: %d\n", WSAGetLastError());
 #else
 		close(ls);
 		perror("accept");
@@ -232,7 +231,7 @@ int MsgIO::server_loop ()
 
 	proto = cliaddr.sin6_family;
 
-	eprintf("Connection from ");
+	printf("Connection from ");
 
 	// A client has connected.
 
@@ -245,8 +244,8 @@ int MsgIO::server_loop ()
 		if ( inet_ntop(proto, &sa->sin_addr, clihost,
 			sizeof(clihost)) != NULL ) {
 
-			eprintf("%s", clihost);
-		} else eprintf("(could not translate network address)");
+			printf("%s", clihost);
+		} else printf("(could not translate network address)");
 	} else if ( proto == AF_INET6 ) {
 		char clihost[INET6_ADDRSTRLEN];
 
@@ -255,10 +254,10 @@ int MsgIO::server_loop ()
 		if ( inet_ntop(proto, &cliaddr.sin6_addr, clihost,
 		sizeof(clihost)) != NULL ) {
 
-			eprintf("%s", clihost);
-		} else eprintf("(could not translate network address)");
+			printf("%s", clihost);
+		} else printf("(could not translate network address)");
 	}
-	eprintf("\n");
+	printf("\n");
 
 	return 1;
 }
@@ -314,7 +313,7 @@ again:
 
 			if ( idx == 0 ) return 1;
 			else if ( idx %2 ) {
-				eprintf("read odd byte count %zu\n", idx);
+				printf("read odd byte count %zu\n", idx);
 				return 0;
 			}
 			if ( sz != NULL ) *sz= idx;

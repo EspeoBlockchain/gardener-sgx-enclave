@@ -1,5 +1,4 @@
 #include <string.h>
-#include "common.h"
 #include "crypto.h"
 #include "hexutil.h"
 #include "enclave_verify.h"
@@ -46,14 +45,14 @@ int verify_enclave_identity(sgx_measurement_t req_mr_signer,
 	// Is the enclave compiled in debug mode?
 	if ( ! allow_debug ) {
 		if ( report->attributes.flags & SGX_FLAGS_DEBUG ) {
-			eprintf("Debug-mode enclave not allowed\n");
+			printf("Debug-mode enclave not allowed\n");
 			return 0;
 		}
 	}
 
 	// Does the ISV product ID meet the minimum requirement?
 	if ( report->isv_prod_id != req_isv_product_id ) {
-		eprintf("ISV Product Id mismatch: saw %u, expected %u\n",
+		printf("ISV Product Id mismatch: saw %u, expected %u\n",
 			report->isv_prod_id, req_isv_product_id);
 
 		return 0;
@@ -61,7 +60,7 @@ int verify_enclave_identity(sgx_measurement_t req_mr_signer,
 
 	// Does the ISV SVN meet the minimum version?
 	if ( report->isv_svn < min_isvsvn ) {
-		eprintf("ISV SVN version too low: %u < %u\n", report->isv_svn,
+		printf("ISV SVN version too low: %u < %u\n", report->isv_svn,
 			min_isvsvn);
 
 		return 0;
@@ -69,10 +68,9 @@ int verify_enclave_identity(sgx_measurement_t req_mr_signer,
 
 	// Does the MRSIGNER match?
 
-	if ( memcmp((const void *) &report->mr_signer, 
-		(const void *) &req_mr_signer, sizeof(sgx_measurement_t) ) ) {
+	if ( memcmp((const void *) &report->mr_signer, (const void *) &req_mr_signer, sizeof(sgx_measurement_t) ) ) {
 
-		eprintf("MRSIGNER mismatch\n");
+		printf("MRSIGNER mismatch\n");
 
 		return 0;
 	}
