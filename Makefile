@@ -82,8 +82,8 @@ else
 endif
 
 # App_Cpp_Files := App/App.cpp App/EnclaveManager.cpp App/SgxException.cpp $(wildcard App/Edger8rSyntax/*.cpp) $(wildcard App/TrustedLibrary/*.cpp)
-App_Cpp_Files := App/App.cpp App/EnclaveManager.cpp App/SgxException.cpp Attestation/hexutil.cpp Attestation/agent_wget.cpp \
-Attestation/base64.cpp Attestation/crypto.cpp Attestation/enclave_verify.cpp \
+App_Cpp_Files := App/App.cpp App/EnclaveManager.cpp App/SgxException.cpp App/Attestator.cpp Attestation/agent_wget.cpp \
+Attestation/base64.cpp Attestation/hexutil.cpp Attestation/crypto.cpp Attestation/enclave_verify.cpp \
 Attestation/iasrequest.cpp Attestation/msgio.cpp Attestation/byteorder.cpp Attestation/hexutil.cpp
 App_Include_Paths := -IInclude -IApp -I$(SGX_SDK)/include
 
