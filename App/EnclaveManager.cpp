@@ -82,8 +82,10 @@ unsigned int EnclaveManager::initRemoteAttestation() {
 	status = sgx_create_enclave_search(ENCLAVE_NAME, SGX_DEBUG_FLAG, &token, &updated, &eid, 0);
 	if ( status != SGX_SUCCESS ) {
 		fprintf(stderr, "sgx_create_enclave: %s: %08x\n", ENCLAVE_NAME, status);
-		if ( status == SGX_ERROR_ENCLAVE_FILE_ACCESS )
+		if ( status == SGX_ERROR_ENCLAVE_FILE_ACCESS ) {
 			fprintf(stderr, "Did you forget to set LD_LIBRARY_PATH??\n");
+		}
+
 		return 1;
 	}
 

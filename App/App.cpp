@@ -23,12 +23,14 @@ int generateRandom(long min, long max, long *result) {
 	return 0;
 }
 
-int initRemoteAttestation(int *status) {
+int initRemoteAttestation() {
     try {
 		EnclaveManager enclave;
-		*status = enclave.initRemoteAttestation();
+		int status = enclave.initRemoteAttestation();
 
-		printf("Tried to initialise remote attestation. Status was %d\n", *status);
+		printf("Tried to initialise remote attestation. Status was %d\n", status);
+
+		return status;
 	} catch (SgxException& e) {
 		printf("%s\n", e.what());
 		return -1;
@@ -39,9 +41,8 @@ int initRemoteAttestation(int *status) {
 
 int main() {
     long longStatus;
-    int intStatus;
     generateRandom(0L, 100L, &longStatus);
-    initRemoteAttestation(&intStatus);
+    initRemoteAttestation();
 
 	return 0;
 }
