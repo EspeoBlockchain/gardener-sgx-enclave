@@ -13,6 +13,7 @@ void testRemoteAttestation() {
 }
 
 int main() {
+    testRandom();
     testRemoteAttestation();
 
 	return 0;
