@@ -63,8 +63,7 @@ void loadConfig(config_t *config) {
 	config->server= strdup("localhost");
 
     if (!from_hexstring((unsigned char *)&config->spid, SPID, 16)) {
-        throw SgxException(SGX_ERROR_UNEXPECTED);
-        printf("SPID must be 32-byte hex string\n");
+        throw std::invalid_argument("SPID must be 32-byte hex string\n");
     }
 
     printf("loaded Config\n");

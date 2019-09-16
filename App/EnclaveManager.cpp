@@ -21,8 +21,6 @@ using std::string;
 using std::to_string;
 using std::invalid_argument;
 
-#define ENCLAVE_NAME "libs/Enclave.signed.so"
-
 EnclaveManager::EnclaveManager() {
 	sgx_enclave_id_t eid;
 	sgx_status_t ret = SGX_SUCCESS;
@@ -76,17 +74,11 @@ unsigned int EnclaveManager::remoteAttestation() {
 
     loadConfig(&config);
 
-	/* Launch the enclave */
-
-	status = sgx_create_enclave_search(ENCLAVE_NAME, SGX_DEBUG_FLAG, &token, &updated, &eid, 0);
-	if ( status != SGX_SUCCESS ) {
-		fprintf(stderr, "sgx_create_enclave: %s: %08x\n", ENCLAVE_NAME, status);
-		if ( status == SGX_ERROR_ENCLAVE_FILE_ACCESS )
-			fprintf(stderr, "Did you forget to set LD_LIBRARY_PATH??\n");
-		throw SgxException(status);
-	}
-
-    do_attestation(eid, &config);
+    do_attestation(this->eid, &config);
 
 	return status;
+}
+
+sgx_enclave_id_t EnclaveManager::getEnclaveId() {
+    return eid;
 }

@@ -17,7 +17,8 @@ int generateRandom(long min, long max, long *result) {
 
 		*result = affineTransformation(generated, min, max, 0, ULONG_MAX);
 		printf("Transforming random value from SGX [0, %lu] to [%ld, %ld]: %lu -> %ld \n", ULONG_MAX, min, max, generated, *result);
-	} catch (SgxException& e) {
+		printf("It was done on Enclave ID = %d\n", enclave.getEnclaveId());
+	} catch (std::exception& e) {
 		printf("%s\n", e.what());
 		return -1;
 	}
@@ -31,9 +32,10 @@ int remoteAttestation() {
 		int status = enclave.remoteAttestation();
 
 		printf("Performed a Remote Attestation. SGX status was %d\n", status);
+		printf("It was done on Enclave ID = %d\n", enclave.getEnclaveId());
 
 		return status;
-	} catch (SgxException& e) {
+	} catch (std::exception& e) {
 		printf("%s\n", e.what());
 		return -1;
 	}
