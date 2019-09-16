@@ -70,8 +70,7 @@ unsigned int EnclaveManager::remoteAttestation() {
 
 	ltp = localtime(&timeT);
 	if ( ltp == NULL ) {
-		perror("localtime");
-		return 1;
+	    throw std::runtime_error("could not retrieve localtime");
 	}
 	lt= *ltp;
 
@@ -84,10 +83,10 @@ unsigned int EnclaveManager::remoteAttestation() {
 		fprintf(stderr, "sgx_create_enclave: %s: %08x\n", ENCLAVE_NAME, status);
 		if ( status == SGX_ERROR_ENCLAVE_FILE_ACCESS )
 			fprintf(stderr, "Did you forget to set LD_LIBRARY_PATH??\n");
-		return 1;
+		throw SgxException(status);
 	}
 
     do_attestation(eid, &config);
 
-	return 0;
+	return status;
 }

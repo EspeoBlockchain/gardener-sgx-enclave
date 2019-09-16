@@ -209,7 +209,7 @@ int do_attestation (sgx_enclave_id_t eid, config_t *config)
 	if ( status != SGX_SUCCESS ) {
 		fprintf(stderr, "enclave_ra_init: %08x\n", status);
 		delete msgio;
-		return 1;
+		throw SgxException(status);
 	}
 
 	/* If we asked for a PSE session, did that succeed? */
@@ -217,7 +217,7 @@ int do_attestation (sgx_enclave_id_t eid, config_t *config)
 		if ( pse_status != SGX_SUCCESS ) {
 			fprintf(stderr, "pse_session: %08x\n", sgxrv);
 			delete msgio;
-			return 1;
+		    throw SgxException(pse_status);
 		}
 	}
 
@@ -225,7 +225,7 @@ int do_attestation (sgx_enclave_id_t eid, config_t *config)
 	if ( sgxrv != SGX_SUCCESS ) {
 		fprintf(stderr, "sgx_ra_init: %08x\n", sgxrv);
 		delete msgio;
-		return 1;
+		throw SgxException(sgxrv);
 	}
 
 	/* Generate msg0 */
@@ -235,7 +235,7 @@ int do_attestation (sgx_enclave_id_t eid, config_t *config)
 		enclave_ra_close(eid, &sgxrv, ra_ctx);
 		fprintf(stderr, "sgx_get_extended_epid_group_id: %08x\n", status);
 		delete msgio;
-		return 1;
+		throw SgxException(status);
 	}
 
 	/* Generate msg1 */
@@ -245,7 +245,7 @@ int do_attestation (sgx_enclave_id_t eid, config_t *config)
 		enclave_ra_close(eid, &sgxrv, ra_ctx);
 		fprintf(stderr, "sgx_ra_get_msg1: %08x\n", status);
 		delete msgio;
-		return 1;
+		throw SgxException(status);
 	}
 
 	/*
@@ -307,7 +307,7 @@ int do_attestation (sgx_enclave_id_t eid, config_t *config)
 		fprintf(stderr, "sgx_ra_proc_msg2: %08x\n", status);
 
 		delete msgio;
-		return 1;
+		throw SgxException(status);
 	}
 
 	msgio->send(msg3, msg3_sz);

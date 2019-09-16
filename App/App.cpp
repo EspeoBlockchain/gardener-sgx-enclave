@@ -7,7 +7,7 @@
 #include "EnclaveManager.h"
 
 long affineTransformation(unsigned long x, long targetRangeMin, long targetRangeMax, unsigned long sourceRangeMin, unsigned long sourceRangeMax) {
-	return floor((double)(x - sourceRangeMin)*(targetRangeMax - targetRangeMin) / (sourceRangeMax - sourceRangeMin) + targetRangeMin);
+	return floor((double)(x - sourceRangeMin) * (targetRangeMax - targetRangeMin) / (sourceRangeMax - sourceRangeMin) + targetRangeMin);
 }
 
 int generateRandom(long min, long max, long *result) {
@@ -30,7 +30,7 @@ int remoteAttestation() {
 		EnclaveManager enclave;
 		int status = enclave.remoteAttestation();
 
-		printf("Tried to initialise remote attestation. Status was %d\n", status);
+		printf("Performed a Remote Attestation. SGX status was %d\n", status);
 
 		return status;
 	} catch (SgxException& e) {
