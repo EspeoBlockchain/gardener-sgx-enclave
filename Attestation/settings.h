@@ -30,5 +30,6 @@
 /* Default CA bundle file on Windows */
 #define DEFAULT_CA_BUNDLE_WIN32	"C:\\Program Files\\cURL\\bin\\curl-ca-bundle.crt"
 
+#define SPID "your-spid"
 
 #endif

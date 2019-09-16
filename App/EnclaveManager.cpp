@@ -53,7 +53,7 @@ unsigned long EnclaveManager::generateRandom() {
 	return result;
 }
 
-unsigned int EnclaveManager::initRemoteAttestation() {
+unsigned int EnclaveManager::remoteAttestation() {
     config_t config;
 	sgx_launch_token_t token= { 0 };
 	sgx_status_t status;

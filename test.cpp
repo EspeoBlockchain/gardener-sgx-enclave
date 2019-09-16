@@ -9,7 +9,7 @@ void testRandom() {
 }
 
 void testRemoteAttestation() {
-    initRemoteAttestation();
+    remoteAttestation();
 }
 
 int main() {

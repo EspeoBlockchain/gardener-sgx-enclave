@@ -2,6 +2,6 @@
 #define __ENCLAVEWRAPPER_H__
 
 extern "C" int generateRandom(long min, long max, long *result);
-extern "C" int initRemoteAttestation();
+extern "C" int remoteAttestation();
 
 #endif

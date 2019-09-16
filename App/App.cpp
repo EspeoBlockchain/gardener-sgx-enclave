@@ -1,11 +1,13 @@
 #include <stdio.h>
 #include <climits>
+#include <math.h>
+
 #include "App.h"
 #include "SgxException.h"
 #include "EnclaveManager.h"
 
 long affineTransformation(unsigned long x, long targetRangeMin, long targetRangeMax, unsigned long sourceRangeMin, unsigned long sourceRangeMax) {
-	return ((double)x - (double)sourceRangeMin)*((double)targetRangeMax - (double)targetRangeMin) / ((double)sourceRangeMax - (double)sourceRangeMin) + (double)targetRangeMin;
+	return floor((double)(x - sourceRangeMin)*(targetRangeMax - targetRangeMin) / (sourceRangeMax - sourceRangeMin) + targetRangeMin);
 }
 
 int generateRandom(long min, long max, long *result) {
@@ -23,10 +25,10 @@ int generateRandom(long min, long max, long *result) {
 	return 0;
 }
 
-int initRemoteAttestation() {
+int remoteAttestation() {
     try {
 		EnclaveManager enclave;
-		int status = enclave.initRemoteAttestation();
+		int status = enclave.remoteAttestation();
 
 		printf("Tried to initialise remote attestation. Status was %d\n", status);
 
@@ -42,7 +44,7 @@ int initRemoteAttestation() {
 int main() {
     long longStatus;
     generateRandom(0L, 100L, &longStatus);
-    initRemoteAttestation();
+    remoteAttestation();
 
 	return 0;
 }

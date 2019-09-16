@@ -11,6 +11,7 @@
 #include "../Attestation/enclave_verify.h"
 #include "../Attestation/hexutil.h"
 #include "../Attestation/json.h"
+#include "../Attestation/settings.h"
 
 #include <time.h>
 #include <string>
@@ -61,7 +62,7 @@ void loadConfig(config_t *config) {
 	config->mode= MODE_ATTEST;
 	config->server= strdup("localhost");
 
-    if (!from_hexstring((unsigned char *)&config->spid, "911DBF50F2EB6DBE27784F60FFFBA856", 16)) {
+    if (!from_hexstring((unsigned char *)&config->spid, SPID, 16)) {
         throw SgxException(SGX_ERROR_UNEXPECTED);
         printf("SPID must be 32-byte hex string\n");
     }
