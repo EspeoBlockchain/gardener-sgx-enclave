@@ -111,50 +111,6 @@ int file_in_searchpath (const char *file, const char *search, char *fullpath,
 	return 0;
 }
 
-sgx_status_t sgx_create_enclave_search (const char *filename, const int edebug,
-	sgx_launch_token_t *token, int *updated, sgx_enclave_id_t *eid,
-	sgx_misc_attribute_t *attr)
-{
-	struct stat sb;
-	char epath[PATH_MAX];	/* includes NULL */
-
-	/* Is filename an absolute path? */
-
-	if ( filename[0] == '/' )
-		return sgx_create_enclave(filename, edebug, token, updated, eid, attr);
-
-	/* Is the enclave in the current working directory? */
-
-	if ( stat(filename, &sb) == 0 )
-		return sgx_create_enclave(filename, edebug, token, updated, eid, attr);
-
-	/* Search the paths in LD_LBRARY_PATH */
-
-	if ( file_in_searchpath(filename, getenv("LD_LIBRARY_PATH"), epath, PATH_MAX) )
-		return sgx_create_enclave(epath, edebug, token, updated, eid, attr);
-
-	/* Search the paths in DT_RUNPATH */
-
-	if ( file_in_searchpath(filename, getenv("DT_RUNPATH"), epath, PATH_MAX) )
-		return sgx_create_enclave(epath, edebug, token, updated, eid, attr);
-
-	/* Standard system library paths */
-
-	if ( file_in_searchpath(filename, DEF_LIB_SEARCHPATH, epath, PATH_MAX) )
-		return sgx_create_enclave(epath, edebug, token, updated, eid, attr);
-
-	/*
-	 * If we've made it this far then we don't know where else to look.
-	 * Just call sgx_create_enclave() which assumes the enclave is in
-	 * the current working directory. This is almost guaranteed to fail,
-	 * but it will insure we are consistent about the error codes that
-	 * get reported to the calling function.
-	 */
-
-	return sgx_create_enclave(filename, edebug, token, updated, eid, attr);
-}
-
-
 attestation_status_t do_attestation (sgx_enclave_id_t eid, config_t *config)
 {
 	sgx_status_t status, sgxrv, pse_status;
