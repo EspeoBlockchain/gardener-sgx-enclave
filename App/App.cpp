@@ -28,6 +28,22 @@ int generateRandom(long min, long max, long *result) {
 	return 0;
 }
 
+int generateAttestedRandom(long min, long max, long *result) {
+	try {
+		EnclaveManager enclave;
+		unsigned long generated = enclave.generateAttestedRandom();
+
+		*result = affineTransformation(generated, min, max, 0, ULONG_MAX);
+		printf("Transforming random value from SGX [0, %lu] to [%ld, %ld]: %lu -> %ld \n", ULONG_MAX, min, max, generated, *result);
+		printf("It was done on Enclave ID = %d\n", enclave.getEnclaveId());
+	} catch (std::exception& e) {
+		printf("%s\n", e.what());
+		return -1;
+	}
+
+	return 0;
+}
+
 attestation_status_t performRemoteAttestation() {
     attestation_status_t status;
 
@@ -50,6 +66,7 @@ attestation_status_t performRemoteAttestation() {
 int main() {
     long longStatus;
     generateRandom(0L, 100L, &longStatus);
+    generateAttestedRandom(0L, 100L, &longStatus);
     performRemoteAttestation();
 
 	return 0;

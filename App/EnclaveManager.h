@@ -14,6 +14,7 @@ public:
 	EnclaveManager();
 	virtual ~EnclaveManager();
 	unsigned long generateRandom();
+	unsigned long generateAttestedRandom();
 	attestation_status_t remoteAttestation();
 	sgx_enclave_id_t getEnclaveId();
 };
