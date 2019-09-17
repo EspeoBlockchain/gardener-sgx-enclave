@@ -43,6 +43,13 @@ EnclaveManager::~EnclaveManager() {
 }
 
 unsigned long EnclaveManager::generateRandom() {
+    attestation_status_t attestationStatus = remoteAttestation();
+    if (attestationStatus != Trusted) {
+        throw SgxException(SGX_ERROR_INVALID_ENCLAVE, attestationStatusToString(attestationStatus));
+    } else {
+        printf("Finished attestation: %s\n", attestationStatusToString(attestationStatus));
+    }
+
 	unsigned int ret = FC_OK;
 	unsigned long result;
 	enclave_generate_random_long(eid, &ret, &result);
@@ -51,7 +58,7 @@ unsigned long EnclaveManager::generateRandom() {
 	return result;
 }
 
-unsigned int EnclaveManager::remoteAttestation() {
+attestation_status_t EnclaveManager::remoteAttestation() {
     config_t config;
 	sgx_launch_token_t token= { 0 };
 	sgx_status_t status;
@@ -74,9 +81,7 @@ unsigned int EnclaveManager::remoteAttestation() {
 
     loadConfig(&config);
 
-    do_attestation(this->eid, &config);
-
-	return status;
+	return do_attestation(this->eid, &config);
 }
 
 sgx_enclave_id_t EnclaveManager::getEnclaveId() {

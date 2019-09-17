@@ -14,7 +14,6 @@
 #include "../Attestation/settings.h"
 
 #include <time.h>
-#include <string>
 #include <cstdint>
 #include <vector>
 #include <iostream>
@@ -61,6 +60,7 @@ void loadConfig(config_t *config) {
 	memset(config, 0, sizeof(&config));
 	config->mode= MODE_ATTEST;
 	config->server= strdup("localhost");
+	config->port= "7777";
 
     if (!from_hexstring((unsigned char *)&config->spid, SPID, 16)) {
         throw std::invalid_argument("SPID must be 32-byte hex string\n");
@@ -155,7 +155,7 @@ sgx_status_t sgx_create_enclave_search (const char *filename, const int edebug,
 }
 
 
-int do_attestation (sgx_enclave_id_t eid, config_t *config)
+attestation_status_t do_attestation (sgx_enclave_id_t eid, config_t *config)
 {
 	sgx_status_t status, sgxrv, pse_status;
 	sgx_ra_msg1_t msg1;
@@ -169,9 +169,8 @@ int do_attestation (sgx_enclave_id_t eid, config_t *config)
 	int rv;
 	MsgIO *msgio;
 	size_t msg4sz = 0;
-	int enclaveTrusted = NotTrusted; // Not Trusted
+	attestation_status_t enclaveTrusted = NotTrusted;
 	int b_pse= OPT_ISSET(flags, OPT_PSE);
-
 
 	if ( config->server == NULL ) {
 		msgio = new MsgIO();
@@ -334,23 +333,7 @@ int do_attestation (sgx_enclave_id_t eid, config_t *config)
 	}
 
 	enclaveTrusted= msg4->status;
-	if ( enclaveTrusted == Trusted ) {
-		printf("Enclave TRUSTED\n");
-	}
-	else if ( enclaveTrusted == NotTrusted ) {
-		printf("Enclave NOT TRUSTED\n");
-	}
-	else if ( enclaveTrusted == Trusted_ItsComplicated ) {
-		// Trusted, but client may be untrusted in the future unless it
-		// takes action.
-
-		printf("Enclave Trust is TRUSTED and COMPLICATED. The client is out of date and\nmay not be trusted in the future depending on the service provider's  policy.\n");
-	} else {
-		// Not Trusted, but client may be able to take action to become
-		// trusted.
-
-		printf("Enclave Trust is NOT TRUSTED and COMPLICATED. The client is out of date.\n");
-	}
+	printf("%s\n", attestationStatusToString(enclaveTrusted));
 
 	/* check to see if we have a PIB by comparing to empty PIB */
 	sgx_platform_info_t emptyPIB;
@@ -412,5 +395,25 @@ int do_attestation (sgx_enclave_id_t eid, config_t *config)
 	enclave_ra_close(eid, &sgxrv, ra_ctx);
 	delete msgio;
 
-	return 0;
+	return enclaveTrusted;
+}
+
+char* attestationStatusToString(attestation_status_t status) {
+    if ( status == Trusted ) {
+		return "Enclave TRUSTED\n";
+	}
+	else if ( status == NotTrusted ) {
+		return "Enclave NOT TRUSTED\n";
+	}
+	else if ( status == Trusted_ItsComplicated ) {
+		// Trusted, but client may be untrusted in the future unless it
+		// takes action.
+
+		return "Enclave Trust is TRUSTED and COMPLICATED. The client is out of date and\nmay not be trusted in the future depending on the service provider's  policy.\n";
+	} else {
+		// Not Trusted, but client may be able to take action to become
+		// trusted.
+
+		return "Enclave Trust is NOT TRUSTED and COMPLICATED. The client is out of date.\n";
+	}
 }

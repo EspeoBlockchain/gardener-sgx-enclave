@@ -5,6 +5,8 @@
 #include "App.h"
 #include "SgxException.h"
 #include "EnclaveManager.h"
+#include "Attestator.h"
+#include "../Attestation/protocol.h"
 
 long affineTransformation(unsigned long x, long targetRangeMin, long targetRangeMax, unsigned long sourceRangeMin, unsigned long sourceRangeMax) {
 	return floor((double)(x - sourceRangeMin) * (targetRangeMax - targetRangeMin) / (sourceRangeMax - sourceRangeMin) + targetRangeMin);
@@ -26,27 +28,29 @@ int generateRandom(long min, long max, long *result) {
 	return 0;
 }
 
-int remoteAttestation() {
+attestation_status_t performRemoteAttestation() {
+    attestation_status_t status;
+
     try {
 		EnclaveManager enclave;
-		int status = enclave.remoteAttestation();
+		status = enclave.remoteAttestation();
 
-		printf("Performed a Remote Attestation. SGX status was %d\n", status);
-		printf("It was done on Enclave ID = %d\n", enclave.getEnclaveId());
+		printf("Performed a Remote Attestation on Enclave ID = %d. Result was %s\n",
+		        enclave.getEnclaveId(), attestationStatusToString(status));
 
 		return status;
 	} catch (std::exception& e) {
 		printf("%s\n", e.what());
-		return -1;
+		return NotTrusted;
 	}
 
-	return 0;
+	return status;
 }
 
 int main() {
     long longStatus;
     generateRandom(0L, 100L, &longStatus);
-    remoteAttestation();
+    performRemoteAttestation();
 
 	return 0;
 }
