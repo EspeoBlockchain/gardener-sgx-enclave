@@ -355,7 +355,7 @@ again:
 			perror("send");
 			return;
 		}
-		fwrite(wbuffer.c_str(), 1, bsent, stdout);
+		printf("sending a message to attestation client\n");
 
 		if ( bsent == len ) {
 			wbuffer.clear();

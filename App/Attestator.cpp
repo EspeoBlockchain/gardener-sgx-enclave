@@ -266,8 +266,6 @@ attestation_status_t do_attestation (sgx_enclave_id_t eid, config_t *config)
 
 	msgio->send(msg3, msg3_sz);
 
-	fsend_msg(stderr, msg3, msg3_sz);
-
 	if ( msg3 ) {
 		free(msg3);
 		msg3 = NULL;
