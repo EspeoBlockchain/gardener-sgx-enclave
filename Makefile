@@ -81,7 +81,10 @@ else
 	Urts_Library_Name := sgx_urts
 endif
 
-App_Cpp_Files := App/App.cpp App/EnclaveManager.cpp App/SgxException.cpp $(wildcard App/Edger8rSyntax/*.cpp) $(wildcard App/TrustedLibrary/*.cpp)
+# App_Cpp_Files := App/App.cpp App/EnclaveManager.cpp App/SgxException.cpp $(wildcard App/Edger8rSyntax/*.cpp) $(wildcard App/TrustedLibrary/*.cpp)
+App_Cpp_Files := App/App.cpp App/EnclaveManager.cpp App/SgxException.cpp App/Attestator.cpp Attestation/agent_wget.cpp \
+Attestation/base64.cpp Attestation/hexutil.cpp Attestation/crypto.cpp Attestation/enclave_verify.cpp \
+Attestation/iasrequest.cpp Attestation/msgio.cpp Attestation/byteorder.cpp Attestation/hexutil.cpp
 App_Include_Paths := -IInclude -IApp -I$(SGX_SDK)/include
 
 App_C_Flags := -fPIC -Wno-attributes $(App_Include_Paths)
@@ -102,9 +105,9 @@ App_Cpp_Flags := $(App_C_Flags)
 App_Link_Flags := -L$(SGX_LIBRARY_PATH) -l$(Urts_Library_Name) -lpthread 
 
 ifneq ($(SGX_MODE), HW)
-	App_Link_Flags += -lsgx_uae_service_sim
+	App_Link_Flags += -lsgx_uae_service_sim -lsgx_ukey_exchange_sim -lsgx_tkey_exchange_sim
 else
-	App_Link_Flags += -lsgx_uae_service
+	App_Link_Flags += -lsgx_uae_service -lsgx_ukey_exchange -lsgx_tkey_exchange
 endif
 
 App_Cpp_Objects := $(App_Cpp_Files:.cpp=.o)
@@ -148,15 +151,15 @@ Enclave_Security_Link_Flags := -Wl,-z,relro,-z,now,-z,noexecstack
 Enclave_Link_Flags := $(Enclave_Security_Link_Flags) \
     -Wl,--no-undefined -nostdlib -nodefaultlibs -nostartfiles -L$(SGX_LIBRARY_PATH) \
 	-Wl,--whole-archive -l$(Trts_Library_Name) -Wl,--no-whole-archive \
-	-Wl,--start-group -lsgx_tstdc -lsgx_tcxx -l$(Crypto_Library_Name) -l$(Service_Library_Name) -Wl,--end-group \
+	-Wl,--start-group -lsgx_tstdc -lsgx_tcxx -l$(Crypto_Library_Name) -l$(Service_Library_Name) $(App_Link_Flags) -Wl,--end-group \
 	-Wl,-Bstatic -Wl,-Bsymbolic -Wl,--no-undefined \
 	-Wl,-pie,-eenclave_entry -Wl,--export-dynamic  \
 	-Wl,--defsym,__ImageBase=0 -Wl,--gc-sections
 
 Enclave_Cpp_Objects := $(Enclave_Cpp_Files:.cpp=.o)
 
-Enclave_Name := Enclave.so
-Signed_Enclave_Name := Enclave.signed.so
+Enclave_Name := libs/Enclave.so
+Signed_Enclave_Name := libs/Enclave.signed.so
 Enclave_Config_File := Enclave/Enclave.config.xml
 
 ifeq ($(SGX_MODE), HW)
@@ -220,6 +223,10 @@ endif
 
 ######## App Objects ########
 
+Attestation/%.o: Attestation/%.cpp
+	@$(CXX) $(SGX_COMMON_CXXFLAGS) $(App_Cpp_Flags) -c $< -o $@ -lssl -lcrypto
+	@echo "CXX  <=  $<"
+
 App/Enclave_u.h: $(SGX_EDGER8R) Enclave/Enclave.edl
 	@cd App && $(SGX_EDGER8R) --untrusted ../Enclave/Enclave.edl --search-path ../Enclave --search-path $(SGX_SDK)/include
 	@echo "GEN  =>  $@"
@@ -235,7 +242,7 @@ App/%.o: App/%.cpp  App/Enclave_u.h
 	@echo "CXX  <=  $<"
 
 $(App_Name): App/Enclave_u.o $(App_Cpp_Objects)
-	@$(CXX) $^ -o $@ $(App_Link_Flags)
+	@$(CXX) $^ -o $@ $(App_Link_Flags) -lssl -lcrypto
 	@echo "LINK =>  $@"
 
 ######## Enclave Objects ########

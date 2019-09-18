@@ -2,7 +2,9 @@
 
 #include "sgx_urts.h"
 
-#define ENCLAVE_FILENAME "Enclave.signed.so"
+#include "../Attestation/protocol.h"
+
+#define ENCLAVE_FILENAME "libs/Enclave.signed.so"
 
 struct EnclaveManager {
 private:
@@ -12,4 +14,7 @@ public:
 	EnclaveManager();
 	virtual ~EnclaveManager();
 	unsigned long generateRandom();
+	unsigned long generateAttestedRandom();
+	attestation_status_t remoteAttestation();
+	sgx_enclave_id_t getEnclaveId();
 };
